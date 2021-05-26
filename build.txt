@@ -1,0 +1,3 @@
+displayName = Terraria Ambience API
+author = RightoeusRyan (Ryan)
+version = 0.1
