@@ -33,6 +33,7 @@ namespace TerrariaAmbienceAPI.Common
         /// </summary>
         public virtual void Initialize() 
         {
+            volume = 0f;
         }
         public bool IsPlaying => volume > 0f; 
         /// <summary>
@@ -90,7 +91,7 @@ namespace TerrariaAmbienceAPI.Common
         }
         internal void InternalInit()
         {
-            volume = 0f;
+            // Move back if there are issues: volume
             SoundInstance.IsLooped = true;
             SoundInstance?.Play();
         }
