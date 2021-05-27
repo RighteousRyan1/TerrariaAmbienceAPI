@@ -42,7 +42,7 @@ namespace TerrariaAmbienceAPI.Common
         /// Run code while this ambience is active.
         /// </summary>
         public virtual void UpdateActive() 
-        { 
+        {
         }
         /// <summary>
         /// The name for the disaster. Defaults to "N/A."
@@ -76,6 +76,8 @@ namespace TerrariaAmbienceAPI.Common
                 }
                 volume *= Main.ambientVolume;
             }
+            if (Main.gameMenu)
+                volume -= VolumeStep;
         }
         internal void ClampVolume()
         {

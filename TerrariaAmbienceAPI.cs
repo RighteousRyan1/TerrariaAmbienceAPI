@@ -15,7 +15,7 @@ namespace TerrariaAmbienceAPI
     {
         public static List<ModAmbience> AllModAmbiences { get; set; } = new List<ModAmbience>();
 
-        public override void PostAddRecipes()
+        public override void PostSetupContent()
         {
             AllModAmbiences = OOPHelper.GetSubclasses<ModAmbience>();
 
@@ -23,15 +23,23 @@ namespace TerrariaAmbienceAPI
             {
                 ambience.Initialize();
 
-                if (!ambience.SoundInstance.IsLooped)
-                    ambience.SoundInstance.IsLooped = true;
-                if (ambience.SoundInstance.State != Microsoft.Xna.Framework.Audio.SoundState.Playing)
-                    ambience.SoundInstance?.Play();
+                ambience.volume = 0f;
+                ambience.SoundInstance.Volume = 0f;
 
                 ContentInstance.Register(ambience);
             }
             On.Terraria.Main.DoUpdate += Main_DoUpdate;
             On.Terraria.Main.DrawInterface += Main_DrawInterface;
+        }
+        public override void PostAddRecipes()
+        {
+            foreach (ModAmbience ambience in AllModAmbiences)
+            {
+                if (!ambience.SoundInstance.IsLooped)
+                    ambience.SoundInstance.IsLooped = true;
+                if (ambience.SoundInstance.State != Microsoft.Xna.Framework.Audio.SoundState.Playing)
+                    ambience.SoundInstance?.Play();
+            }
         }
         public override void Unload()
         {
@@ -97,7 +105,6 @@ namespace TerrariaAmbienceAPI
             foreach (ModAmbience ambience in AllModAmbiences)
             {
                 ambience.UpdateThisAmbience();
-
                 ambience.ClampVolume();
             }
         }
@@ -107,7 +114,6 @@ namespace TerrariaAmbienceAPI
             foreach (ModAmbience ambience in AllModAmbiences)
             {
                 ambience.UpdateActive();
-                ambience.UpdateThisAmbience();
             }
         }
         public override void PreSaveAndQuit()
