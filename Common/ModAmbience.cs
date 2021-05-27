@@ -18,7 +18,8 @@ namespace TerrariaAmbienceAPI.Common
     /// </summary>
     public class ModAmbience
     {
-        internal string nameOfReturnBoolean;
+        public Mod mod => ModLoader.Mods.First(mod => mod.Code == GetType().Assembly);
+
         public float volume;
         public SoundEffect Sound { get; set; }
 
@@ -34,6 +35,7 @@ namespace TerrariaAmbienceAPI.Common
         public virtual void Initialize() 
         {
             volume = 0f;
+            SoundInstance.Volume = 0f;
         }
         public bool IsPlaying => volume > 0f; 
         /// <summary>
@@ -89,11 +91,9 @@ namespace TerrariaAmbienceAPI.Common
             if (IsPlaying)
                 UpdateActive();
         }
-        internal void InternalInit()
+        public override string ToString()
         {
-            // Move back if there are issues: volume
-            SoundInstance.IsLooped = true;
-            SoundInstance?.Play();
+            return $"IsPlaying: {IsPlaying} | SFX: {SoundInstance} | VolStep: {VolumeStep} | Volume: {SoundInstance.Volume} | ShouldBePlaying: {WhenToPlay} | Name: {Name}";
         }
     }
 }

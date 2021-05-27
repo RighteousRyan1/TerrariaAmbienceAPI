@@ -1,1 +1,6 @@
-Terraria Ambience API is a pretty cool mod, it does...this. Modify this file with a description of your mod.
+This is the API behind the mod named TerrariaAmbience. Use this if you wish to add underlying ambient tracks to your mod (be it birds, crickets, whatever).
+Refer to the wiki at https://github.com/RighteousRyan1/TerrariaAmbienceAPI/wiki/Using-the-API
+
+Update 1.0.1:
+
+- Fixed a huge oversight

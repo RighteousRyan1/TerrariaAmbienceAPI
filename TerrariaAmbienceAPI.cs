@@ -7,6 +7,7 @@ using TerrariaAmbienceAPI.Common;
 using TerrariaAmbienceAPI.Common.Utilities;
 using ReLogic.Graphics;
 using System.Text;
+using System.Linq;
 
 namespace TerrariaAmbienceAPI
 {
@@ -14,23 +15,31 @@ namespace TerrariaAmbienceAPI
     {
         public static List<ModAmbience> AllModAmbiences { get; set; } = new List<ModAmbience>();
 
-        public override void PostSetupContent()
+        public override void PostAddRecipes()
         {
             AllModAmbiences = OOPHelper.GetSubclasses<ModAmbience>();
 
             foreach (ModAmbience ambience in AllModAmbiences)
             {
                 ambience.Initialize();
-                ambience.InternalInit();
+
+                if (!ambience.SoundInstance.IsLooped)
+                    ambience.SoundInstance.IsLooped = true;
+                if (ambience.SoundInstance.State != Microsoft.Xna.Framework.Audio.SoundState.Playing)
+                    ambience.SoundInstance?.Play();
 
                 ContentInstance.Register(ambience);
             }
             On.Terraria.Main.DoUpdate += Main_DoUpdate;
             On.Terraria.Main.DrawInterface += Main_DrawInterface;
         }
+        public override void Unload()
+        {
+        }
 
         private void Main_DrawInterface(On.Terraria.Main.orig_DrawInterface orig, Terraria.Main self, Microsoft.Xna.Framework.GameTime gameTime)
         {
+            orig(self, gameTime);
             var cfg = ModContent.GetInstance<DebugConfig>();
 
             string text = string.Empty;
@@ -44,13 +53,22 @@ namespace TerrariaAmbienceAPI
                 index++;
                 if (a != null && AllModAmbiences.Count > 0)
                 {
+                    string coolString = a.GetType().Assembly.GetName().Name;
+                    string numRemoved = "";
+                    foreach (char ch in coolString)
+                    {
+                        if (ch == '_')
+                            numRemoved = coolString.Split('_')[0];
+                    }
+                    // string better = getTypeAsmName.Remove(getTypeAsmName[getTypeAsmName.Length - 3], getTypeAsmName[getTypeAsmName.Length - 3] == '_' ? 2 : 0);
+                    string displayableNotLong = index < 2 ? $"{a.Name} ({numRemoved})" : $", {a.Name} ({numRemoved})";
                     if (cfg.debug_AsmNames && !tooLong)
-                        text += index < 2 ? $"{a.Name} ({a.GetType().Assembly.GetName().Name})" : $", {a.Name} ({a.GetType().Assembly.GetName().Name})";
+                        text += displayableNotLong;
                     else if (!cfg.debug_AsmNames && !tooLong)
                         text += index < 2 ? $"{a.Name}" : $", {a.Name}";
 
                     if (tooLong && cfg.debug_AsmNames)
-                        text += $"\n{a.Name} ({a.GetType().Assembly.GetName().Name})";
+                        text += $"\n{a.Name} ({numRemoved}";
                     if (tooLong && !cfg.debug_AsmNames)
                         text += $"\n{a.Name}";
 
@@ -70,7 +88,6 @@ namespace TerrariaAmbienceAPI
 
                 sb.End();
             }
-            orig(self, gameTime);
         }
 
         private void Main_DoUpdate(On.Terraria.Main.orig_DoUpdate orig, Terraria.Main self, Microsoft.Xna.Framework.GameTime gameTime)

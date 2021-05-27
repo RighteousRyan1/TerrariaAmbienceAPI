@@ -1,3 +1,4 @@
 displayName = Terraria Ambience API
 author = RightoeusRyan (Ryan)
-version = 0.1
+version = 1.0.1
+homepage = https://github.com/RighteousRyan1/TerrariaAmbienceAPI/wiki/Using-the-API
