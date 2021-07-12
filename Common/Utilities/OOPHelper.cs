@@ -16,7 +16,7 @@ namespace TerrariaAmbienceAPI.Common.Utilities
         /// Get all classes that extend T.
         /// </summary>
         /// <typeparam name="T">The type you want to check has a subclass.</typeparam>
-        /// <returns>A List of all classes that extend T. </returns>
+        /// <returns>A List of all classes that extend T.</returns>
         public static List<T> GetSubclasses<T>() where T : class
         {
             var types = AllTypes;

@@ -2,7 +2,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using System.ComponentModel;
 
-namespace NDMod.Content
+namespace TerrariaAmbienceAPI.Content
 {
 	[Label("Debugging Config (Modders)")]
 	public class DebugConfig : ModConfig

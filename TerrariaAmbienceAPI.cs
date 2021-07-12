@@ -1,51 +1,62 @@
 using Microsoft.Xna.Framework;
-using NDMod.Content;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using TerrariaAmbienceAPI.Common;
 using TerrariaAmbienceAPI.Common.Utilities;
 using ReLogic.Graphics;
-using System.Text;
-using System.Linq;
+using TerrariaAmbienceAPI.Content;
+using System;
+using Microsoft.Xna.Framework.Audio;
 
 namespace TerrariaAmbienceAPI
 {
     public class TerrariaAmbienceAPI : Mod
     {
-        public static List<ModAmbience> AllModAmbiences { get; set; } = new List<ModAmbience>();
+        public static List<ModAmbience> AllModAmbiences { get; internal set; } = new List<ModAmbience>();
+        public override object Call(params object[] args)
+        {
+            var mod = args[0] as Mod;
+            var path = args[1] as string;
+            var name = args[2] as string;
+            var maxVol = args[3] as float?;
+            var volStep = args[4] as float?;
+            var playWhen = args[5] as Func<bool>;
+            var actionInit = args[6] as Action<ModAmbience>;
+            var actionUpdateAct = args[7] as Action<ModAmbience>;
+            var sNQAction = args[8] as Action<ModAmbience>;
 
+            try
+            {
+                var newModAmbience = new ModAmbience(mod, path, name, maxVol.Value, volStep.Value, playWhen, sNQAction, actionInit, actionUpdateAct);
+                
+                newModAmbience?.Initialize();
+                Logger.Debug($"Ambience with name '{name}' was initialized.");
+                return newModAmbience;
+            }
+            catch
+            {
+                mod.Logger.Error($"ModAmbience with name '{((name != string.Empty && name != null) ? name : "Unknown")}' failed to initialize.");
+                return "TerrariaAmbienceAPI: Mod.Call Failed | Exception Thrown";
+            }
+        }
         public override void PostSetupContent()
         {
-            AllModAmbiences = OOPHelper.GetSubclasses<ModAmbience>();
-
-            foreach (ModAmbience ambience in AllModAmbiences)
-            {
-                ambience.Initialize();
-
-                ambience.volume = 0f;
-                ambience.SoundInstance.Volume = 0f;
-
-                ContentInstance.Register(ambience);
-            }
-            On.Terraria.Main.DoUpdate += Main_DoUpdate;
-            On.Terraria.Main.DrawInterface += Main_DrawInterface;
+            On.Terraria.Main.DoUpdate += UpdateModAmbiences;
+            On.Terraria.Main.DrawInterface += DrawDebugInfo;
+        }
+        public override void Load()
+        {
         }
         public override void PostAddRecipes()
         {
-            foreach (ModAmbience ambience in AllModAmbiences)
-            {
-                if (!ambience.SoundInstance.IsLooped)
-                    ambience.SoundInstance.IsLooped = true;
-                if (ambience.SoundInstance.State != Microsoft.Xna.Framework.Audio.SoundState.Playing)
-                    ambience.SoundInstance?.Play();
-            }
+            Logger.Info($"Loaded {AllModAmbiences.Count} ModAmbience(s).");
         }
         public override void Unload()
         {
+            AllModAmbiences = new List<ModAmbience>();
         }
-
-        private void Main_DrawInterface(On.Terraria.Main.orig_DrawInterface orig, Terraria.Main self, Microsoft.Xna.Framework.GameTime gameTime)
+        private void DrawDebugInfo(On.Terraria.Main.orig_DrawInterface orig, Main self, GameTime gameTime)
         {
             orig(self, gameTime);
             var cfg = ModContent.GetInstance<DebugConfig>();
@@ -53,62 +64,38 @@ namespace TerrariaAmbienceAPI
             string text = string.Empty;
 
             int index = 0;
+            var sb = Main.spriteBatch;
 
-            bool tooLong = false;
+            sb.Begin();
 
             foreach (ModAmbience a in AllModAmbiences)
             {
                 index++;
                 if (a != null && AllModAmbiences.Count > 0)
                 {
-                    string coolString = a.GetType().Assembly.GetName().Name;
-                    string numRemoved = "";
-                    foreach (char ch in coolString)
-                    {
-                        if (ch == '_')
-                            numRemoved = coolString.Split('_')[0];
-                    }
-                    // string better = getTypeAsmName.Remove(getTypeAsmName[getTypeAsmName.Length - 3], getTypeAsmName[getTypeAsmName.Length - 3] == '_' ? 2 : 0);
-                    string displayableNotLong = index < 2 ? $"{a.Name} ({numRemoved})" : $", {a.Name} ({numRemoved})";
-                    if (cfg.debug_AsmNames && !tooLong)
-                        text += displayableNotLong;
-                    else if (!cfg.debug_AsmNames && !tooLong)
-                        text += index < 2 ? $"{a.Name}" : $", {a.Name}";
-
-                    if (tooLong && cfg.debug_AsmNames)
-                        text += $"\n{a.Name} ({numRemoved}";
-                    if (tooLong && !cfg.debug_AsmNames)
+                    string modName = a.Mod.Name;
+                    if (cfg.debug_AsmNames)
+                        text += $"\n{a.Name} ({modName})";
+                    if (!cfg.debug_AsmNames)
                         text += $"\n{a.Name}";
-
-
-                    if (Main.fontMouseText.MeasureString(text).X > Main.screenWidth)
-                        tooLong = true;
                 }
             }
 
             if (cfg.debug_ViewAllLoadedModAmbiences)
             {
-                var sb = Main.spriteBatch;
-
-                sb.Begin();
-
-                sb.DrawString(Main.fontMouseText, text, new Vector2(4, 2), Color.White);
-
-                sb.End();
+                sb.DrawString(Main.fontMouseText, text, Main.playerInventory ? new Vector2(16, 350) : new Vector2(16, 50), Color.White);
             }
+            sb.End();
         }
-
-        private void Main_DoUpdate(On.Terraria.Main.orig_DoUpdate orig, Terraria.Main self, Microsoft.Xna.Framework.GameTime gameTime)
+        private void UpdateModAmbiences(On.Terraria.Main.orig_DoUpdate orig, Main self, GameTime gameTime)
         {
             orig(self, gameTime);
 
             foreach (ModAmbience ambience in AllModAmbiences)
             {
-                ambience.UpdateThisAmbience();
-                ambience.ClampVolume();
+                ambience.INTERNAL_Update();
             }
         }
-
         public override void PostUpdateEverything()
         {
             foreach (ModAmbience ambience in AllModAmbiences)

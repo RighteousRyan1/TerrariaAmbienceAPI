@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TerrariaAmbienceAPI</name>
+    </assembly>
+    <members>
+        <member name="T:TerrariaAmbienceAPI.Common.ModAmbience">
+            <summary>
+            Create a custom ambience track.
+            <para></para>
+            When inheriting from this class, you MUST use this.Sound and this.SoundInstance property during initialization for this not to break.
+            <para></para>
+            You can also get an instance of any ambience using <code>ModContent.GetInstance</code>
+            </summary>
+        </member>
+        <member name="P:TerrariaAmbienceAPI.Common.ModAmbience.mod">
+            <summary>
+            This mod.
+            </summary>
+        </member>
+        <member name="P:TerrariaAmbienceAPI.Common.ModAmbience.Sound">
+            <summary>
+            The sound representation of your ambient track.
+            </summary>
+        </member>
+        <member name="P:TerrariaAmbienceAPI.Common.ModAmbience.SoundInstance">
+            <summary>
+            The instanced sound representation of your ambient track.
+            </summary>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.ModAmbience.SaveAndQuit">
+            <summary>
+            Put the things in here you wish to do when the player saves and quits.
+            </summary>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.ModAmbience.Initialize">
+            <summary>
+            Put all things you want to instantiate on Mod.Load() here. <para></para>
+            The abstract members 'Sound' and 'SoundInstance' must be set there.
+            </summary>
+        </member>
+        <member name="P:TerrariaAmbienceAPI.Common.ModAmbience.IsPlaying">
+            <summary>
+            Is your ambient track playing?
+            </summary>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.ModAmbience.UpdateActive">
+            <summary>
+            Run code while this ambience is active.
+            </summary>
+        </member>
+        <member name="P:TerrariaAmbienceAPI.Common.ModAmbience.Name">
+            <summary>
+            The name for the ambient track. Defaults to "N/A."
+            <para>Don't forget to set the name!</para>
+            </summary>
+        </member>
+        <member name="P:TerrariaAmbienceAPI.Common.ModAmbience.WhenToPlay">
+            <summary>
+            Start playing the ambience track when this value is true. Defaults to false, so set the value!
+            </summary>
+        </member>
+        <member name="P:TerrariaAmbienceAPI.Common.ModAmbience.VolumeStep">
+            <summary>
+            This is how fast this ambience changes volume based on whether it is active or not. <para></para>
+            For example, if the ambience should not be playing, the volume would decrease by the value this is set to every tick. Defaults to 0.0075f.
+            </summary>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.ModAmbience.UpdateThisAmbience">
+            <summary>
+            Completely internal ambient updating.
+            </summary>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.ModAmbience.ClampVolume">
+            <summary>
+            Clamp volumes.
+            </summary>
+        </member>
+        <member name="P:TerrariaAmbienceAPI.Common.ModAmbience.MaxVolume">
+            <summary>
+            The maximum volume this ambient track can achieve at any given time.
+            </summary>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.Utilities.ArrayHelper.To2DArray(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Converts a Vector2 into a 2-Dimensional Array.
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.Utilities.ArrayHelper.ToTile(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Converts a Vector2 into a Tile object.
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.Utilities.CommonUtils.OnKeyPressed(Microsoft.Xna.Framework.Input.KeyboardState,Microsoft.Xna.Framework.Input.Keys)">
+            <summary>
+            Returns true when a keyboard key is pressed.
+            </summary>
+            <param name="state"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.Utilities.CommonUtils.OnKeyRelease(Microsoft.Xna.Framework.Input.KeyboardState,Microsoft.Xna.Framework.Input.Keys)">
+            <summary>
+            Is true when key is released.
+            </summary>
+            <param name="state"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.Utilities.CommonUtils.AreKeysPressed(Microsoft.Xna.Framework.Input.KeyboardState,Microsoft.Xna.Framework.Input.Keys[])">
+            <summary>
+            Checks if all Keys in <paramref name="keys"/> are pressed.
+            </summary>
+            <param name="state"></param>
+            <param name="keys"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.Utilities.CommonUtils.Pick``1(``0[])">
+            <summary>
+            Pick a random T from the values array.
+            </summary>
+            <typeparam name="T">The type.</typeparam>
+            <param name="values">The params array of objects.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.Utilities.MathMethods.RoughStep(System.Single@,System.Single,System.Single)">
+            <summary>
+            Step value towards goal by an amount of step every call.
+            </summary>
+            <param name="value"></param>
+            <param name="goal"></param>
+            <param name="step"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TerrariaAmbienceAPI.Common.Utilities.OOPHelper.GetSubclasses``1">
+            <summary>
+            Get all classes that extend T.
+            </summary>
+            <typeparam name="T">The type you want to check has a subclass.</typeparam>
+            <returns>A List of all classes that extend T. </returns>
+        </member>
+    </members>
+</doc>
