@@ -22,13 +22,10 @@ namespace TerrariaAmbienceAPI
             var maxVol = args[3] as float?;
             var volStep = args[4] as float?;
             var playWhen = args[5] as Func<bool>;
-            var actionInit = args[6] as Action<ModAmbience>;
-            var actionUpdateAct = args[7] as Action<ModAmbience>;
-            var sNQAction = args[8] as Action<ModAmbience>;
 
             try
             {
-                var newModAmbience = new ModAmbience(mod, path, name, maxVol.Value, volStep.Value, playWhen, sNQAction, actionInit, actionUpdateAct);
+                var newModAmbience = new ModAmbience(mod, path, name, maxVol.Value, volStep.Value, playWhen);
                 
                 newModAmbience?.Initialize();
                 Logger.Debug($"Ambience with name '{name}' was initialized.");
@@ -94,20 +91,6 @@ namespace TerrariaAmbienceAPI
             foreach (ModAmbience ambience in AllModAmbiences)
             {
                 ambience.INTERNAL_Update();
-            }
-        }
-        public override void PostUpdateEverything()
-        {
-            foreach (ModAmbience ambience in AllModAmbiences)
-            {
-                ambience.UpdateActive();
-            }
-        }
-        public override void PreSaveAndQuit()
-        {
-            foreach (ModAmbience ambience in AllModAmbiences)
-            {
-                ambience.SaveAndQuit();
             }
         }
     }

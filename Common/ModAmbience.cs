@@ -30,24 +30,16 @@ namespace TerrariaAmbienceAPI.Common
     public class ModAmbience
     {
         private string path;
-        private Action<ModAmbience> initAction;
-        private Action<ModAmbience> saveAndQuitAction;
-        private Action<ModAmbience> activeUpdateAction;
-
         private Func<bool> _playWhen;
-        public ModAmbience(Mod mod, string path, string name, float maxVolume, float volumeStep, Func<bool> playWhen, Action<ModAmbience> saveAndQuitAction,
-            Action<ModAmbience> initializeAction, Action<ModAmbience> updateActiveAction)
+        public ModAmbience(Mod mod, string path, string name, float maxVolume, float volumeStep, Func<bool> playWhen)
         {
             this.path = path;
             Mod = mod;
             Name = name;
             MaxVolume = maxVolume;
-            initAction = initializeAction;
-            activeUpdateAction = updateActiveAction;
             VolumeStep = volumeStep;
             _playWhen = playWhen;
             volume = 0f;
-            this.saveAndQuitAction = saveAndQuitAction;
             TerrariaAmbienceAPI.AllModAmbiences.Add(this);
         }
         /// <summary>
@@ -64,10 +56,6 @@ namespace TerrariaAmbienceAPI.Common
         /// </summary>
         internal SoundEffectInstance SoundInstance { get; private set; }
         /// <summary>
-        /// Put the things in here you wish to do when the player saves and quits.
-        /// </summary>
-        internal void SaveAndQuit() { saveAndQuitAction?.Invoke(this); }
-        /// <summary>
         /// Put all things you want to instantiate on Mod.Load() here. <para></para>
         /// The abstract members 'Sound' and 'SoundInstance' must be set there.
         /// </summary>
@@ -82,16 +70,11 @@ namespace TerrariaAmbienceAPI.Common
                 SoundInstance.IsLooped = true;
             if (SoundInstance.State != SoundState.Playing)
                 SoundInstance?.Play();
-            initAction?.Invoke(this);
         }
         /// <summary>
         /// Is your ambient track playing?
         /// </summary>
         public bool IsPlaying => volume > 0f;
-        /// <summary>
-        /// Run code while this ambience is active.
-        /// </summary>
-        internal void UpdateActive() { activeUpdateAction?.Invoke(this); }
         /// <summary>
         /// The name for the ambient track. Defaults to "N/A."
         /// <para>Don't forget to set the name!</para>
@@ -117,8 +100,6 @@ namespace TerrariaAmbienceAPI.Common
         {
             if (_playWhen != null)
                 WhenToPlay = _playWhen.Invoke();
-            if (IsPlaying)
-                UpdateActive();
             if (SoundInstance != null)
             {
                 if (WhenToPlay && Main.hasFocus && volume <= MaxVolume)
